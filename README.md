@@ -16,9 +16,12 @@ Logger is a lightweight C++ library for logging messages to various outputs with
 #include "Logger.hpp"
 
 int main() {
-    Logger logger(__FILE__);
-    logger.log(LogLevel::INFO, "This is an information message");
-    logger.log(LogLevel::ERROR, "Oops! Something went wrong");
+    // Macro logging
+    LOGGER << "Default operation is ERROR";
+
+    Logger logger(__FILE__, __LINE__);
+    logger.Log(LogLevel::INFO, "This is an information message");
+    logger.Log(LogLevel::ERROR, "Oops! Something went wrong");
 
     return 0;
 }

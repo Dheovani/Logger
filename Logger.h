@@ -1,3 +1,11 @@
+/*************************************************************************/
+/* Logger class                                                          */
+/* Contains 5 levels of loggin (Info, Debug, Trace, Warning, Error)      */
+/* wich can be found in LogType enum. The default logging level is Error */
+/* This class can be used by calling the LOGGER macro defined bellow     */
+/* or by creating a new instance of the logger class.                    */
+/*************************************************************************/
+
 #pragma once
 
 #include <string>
@@ -8,48 +16,56 @@
 
 class Logger;
 
-typedef enum {
+#define LOGGER	\
+	Logger(__FILE__, __LINE__)
+
+typedef enum
+{
 	INFO,
 	DEBUG,
 	TRACE,
 	WARNING,
 	ERROR
-} LogType;
+} LogLevel;
 
 class Logger
 {
+	int line;
 	std::string className;
-
-	constexpr const int GetLine() const;
 
 	const std::string GetClassName(const char* name) const;
 
-	const std::string GetLogTypeMessage(const LogType& type) const;
+	const std::string GetLogTypeMessage(const LogLevel& type) const;
+
+	// Prevent the use of copy constructor and assignment operator for safety.
+	Logger(const Logger&) = delete;
+	Logger& operator=(const Logger&) = delete;
 
 public:
 	template <class Class>
-	Logger(Class c)
+	Logger(Class c, int lineNumber)
+		: line(lineNumber)
 	{
-		if (std::is_same<decltype(c), const char*>::value)
+		if constexpr (std::is_same_v<Class, const char*>)
 			className = GetClassName(c);
 		else
 		{
 			const std::string name = typeid(c).name();
-			size_t pos = name.find(' ', 0);
+			size_t pos = name.find(' ', 0) + 1;
 
 			className = (pos == std::string::npos) ? name.c_str() : (name.c_str() + pos);
 		}
 	}
 
 	template<typename T>
-	Logger& operator<<(const T& value)
+	const Logger& operator<<(const T& value) const
 	{
-		Trace(value);
+		Error(value);
 		return *this;
 	}
 
 	template<typename... Args>
-	inline void Log(const LogType& logType, const char* msg, Args... args) const
+	inline void Log(const LogLevel& logType, const char* msg, Args... args) const
 	{
 		std::printf(GetLogTypeMessage(logType).c_str());
 		std::printf(msg, args...);

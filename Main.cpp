@@ -1,18 +1,23 @@
 #include <iostream>
 #include "Logger.h"
 
-#define LOGGER Logger(__FILE__)
+class Test
+{
+public:
+	void log(const char *msg, int line)
+	{
+		Logger logger(*this, line);
+		logger.Info(msg);
+	}
+};
 
 int main(void)
 {
 	// Default strategy: Trace
 	LOGGER << "Logging a message";
 
-	LOGGER.Info("Info message");
-	LOGGER.Debug("Debug message");
-	LOGGER.Trace("Trace message");
-	LOGGER.Warning("Warning message");
-	LOGGER.Error("Error message");
+	Test t;
+	t.log("Teste", __LINE__);
 
 	return 0;
 }
