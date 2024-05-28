@@ -60,7 +60,17 @@ public:
 	template<typename T>
 	const Logger& operator<<(const T& value) const
 	{
+#if defined(_DFLT_LVL_INFO)
+		Info(value);
+#elif defined(_DFLT_LVL_DEBUG)
+		Debug(value);
+#elif defined(_DFLT_LVL_TRACE)
+		Trace(value);
+#elif defined(_DFLT_LVL_WARNING)
+		Warning(value);
+#else
 		Error(value);
+#endif // !_DFLT_LVL_
 		return *this;
 	}
 
