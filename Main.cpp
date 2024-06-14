@@ -13,7 +13,6 @@ public:
 
 int main(void)
 {
-	// Default strategy: Trace
 	LOGGER << "Logging a message";
 
 	Test t;
